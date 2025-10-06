@@ -162,17 +162,52 @@ let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
 //===========================================
 
 
+
+//secret must be a bit
+/*
 let secret = 2n;
 console.log("secret is", secret);   
 let t = 123n;
-
-//circuit that makes
 let c = commit(secret, t, g, h, p);
 let c_squared = commit_squared(secret, t, g, h, p, q);
 let c_squared_bond = bond_equal_commits(c, t, c_squared.out.commit, c_squared.out.t, g, h, p, q);
 const constrain1 = verify_SquareProof(c_squared.env, c_squared.proof);
 const constrain2 = verify_bond_equal_commits(c_squared_bond.env, c_squared_bond.proof);
 console.log("is secret a bit?", constrain1, "&&",constrain2, "=",constrain1 && constrain2);
+*/
+
+
+//negating a secret
+let secret = 2n;
+let secretNegated = (q - secret + q) % q;
+let secretZero = 0n;
+console.log("inputs:", [secret, secretNegated, secretZero]);
+
+//input (a)
+let t = 123n;
+let c = commit(secret, t, g, h, p);
+//input (-a)
+let t_negated = 4444n;
+let c_negated = commit(secretNegated, t_negated, g, h, p);
+//sum a + (-a)
+const t_sum = add(t, t_negated, p);
+const c_sum = multi(c, c_negated, p);
+//input z
+let t_zero = 333n;
+let c_zero = commit(secretZero, t_zero, g, h, p);
+//sum z + z
+const t_zero_sum = add(t_zero, t_zero, p);
+const c_zero_sum = multi(c_zero, c_zero, p);
+//constrain (z + z) === z
+let c_zero_sum_bond = bond_equal_commits(c_zero_sum, t_zero_sum, c_zero, t_zero, g, h, p, q);
+const constrain_zero_sum_bond = verify_bond_equal_commits(c_zero_sum_bond.env, c_zero_sum_bond.proof);
+console.log("(z + z) === z \t?\t", constrain_zero_sum_bond);
+//constrain (a + (-a)) === z
+let c_sum_bond = bond_equal_commits(c_sum, t_sum, c_zero, t_zero, g, h, p, q);
+const constrain_sum_bond = verify_bond_equal_commits(c_sum_bond.env, c_sum_bond.proof);
+console.log("(a + (-a)) === z \t?\t", constrain_sum_bond);
+
+
 
 /*
 let c1 = commit(secret, t, g, h, p);
