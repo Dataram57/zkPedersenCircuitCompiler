@@ -1,0 +1,5 @@
+
+template BeBit(a){
+    square a_sq(a);
+    a === a_sq;
+}

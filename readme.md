@@ -20,18 +20,18 @@ MyCircuit(args) c(input_nodes);
 
 ### Nodes
 
-- `node b = a` - `b`'s value is said to be `a`. ***No verification of putting different value.***
+- `b = a` - `b`'s value is said to be `a`. ***No verification of putting different value.***
 
 ### Automatic nodes
 
 ```
 //sum = a + 14*b + (1/2)*c + d 
-sum += {
+sum += [
     a
     ,[14, b]
     ,[1/2, c]
     ,d
-};
+];
 ```
 
 Makes usage of homomorphic properties.

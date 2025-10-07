@@ -1,7 +1,0 @@
-input a;
-node a_neg = -a;
-node zero = 0;
-sum zero_sum[2 * zero];
-zero_sum === zero;
-sum a_sum[a, a_neg];
-a_sum === zero;

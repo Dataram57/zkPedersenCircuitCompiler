@@ -1,4 +1,0 @@
-input a;
-node a_sq = a * a;
-a ^== a_sq;
-a === a_sq;

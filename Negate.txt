@@ -1,0 +1,13 @@
+template Negate(a){
+    out = -a;
+    zero = 0;
+    zero_sum += [
+        [2, zero]
+    ];
+    zero_sum === zero;
+    a_sum += [
+        a,
+        out
+    ];
+    a_sum === zero;
+};
