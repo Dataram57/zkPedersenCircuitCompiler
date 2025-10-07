@@ -237,10 +237,20 @@ console.log(verify_SquareProof(c3.env, c3.proof));
 //#region Interpreter
 
 const Node = class {
-    constructor(name){
+    constructor(name, commitData){
         this.name = name;
-        this.secret = 0n;
-        this.t = 0n;
+        this.commitData = commitData ?? {
+            secret: 0n,
+            t: 33n,
+            g: g,
+            h: h,
+            p: q,
+            q: q,
+        };
+    }
+
+    commit(){
+        return commit(this.commitData.secret, this.commitData.t, this.commitData.g, this.commitData.h, this.commitData.p);
     }
 };
 
@@ -349,6 +359,16 @@ const Interpreter = class {
         return;
     }
 
+    AddNode(id, commitData){
+        this.nodes.push(new Node(id, commitData));
+        return this.nodes[this.nodes.length - 1];
+    }
+
+    EvalExpression(line){
+        return 666n;
+    }
+
+    //returns object to put into a proof
     ParseLine(line, context){
         line = line.trim();
 
@@ -356,6 +376,12 @@ const Interpreter = class {
         //"="
         if(elements[1] == '='){
             console.log("CREATE NODE");
+            const commitData = {
+                secret: this.EvalExpression(elements[2]),
+                t: 33n,
+                g,h,p,q
+            };
+            return this.AddNode(elements[0], commitData).commit();
         }
         //"+="
         else if(elements[1] == '+='){
@@ -368,6 +394,13 @@ const Interpreter = class {
         //anything else
         else{
             console.log("CUSTOM PROOF");
+
+            //Native square
+            if(elements[0].startsWith('square')){
+                
+
+
+            }
         }
 
     }
@@ -380,7 +413,7 @@ const Interpreter = class {
 
 const parser = new Interpreter();
 
-parser.ParseLine("a = 1");
+console.log(parser.ParseLine("a = 1"));
+console.log(parser);
 parser.ParseLine("square a_sq(a)");
 parser.ParseLine("a === a_sq");
-

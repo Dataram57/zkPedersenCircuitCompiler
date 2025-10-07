@@ -1,0 +1,5 @@
+
+template BeZero(a){
+    sum += [[2, a]];
+    sum === a;
+}
