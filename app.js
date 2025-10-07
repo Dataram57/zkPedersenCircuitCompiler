@@ -156,6 +156,9 @@ console.log(powermod(g, q, p)); //must
 
 let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
 
+//================================================================
+//#region Examples
+
 //console.log(powermod(g, p, p));
 
 
@@ -177,12 +180,12 @@ console.log("is secret a bit?", constrain1, "&&",constrain2, "=",constrain1 && c
 */
 
 
+/*
 //negating a secret
 let secret = 2n;
 let secretNegated = (q - secret + q) % q;
 let secretZero = 0n;
 console.log("inputs:", [secret, secretNegated, secretZero]);
-
 //input (a)
 let t = 123n;
 let c = commit(secret, t, g, h, p);
@@ -206,7 +209,7 @@ console.log("(z + z) === z \t?\t", constrain_zero_sum_bond);
 let c_sum_bond = bond_equal_commits(c_sum, t_sum, c_zero, t_zero, g, h, p, q);
 const constrain_sum_bond = verify_bond_equal_commits(c_sum_bond.env, c_sum_bond.proof);
 console.log("(a + (-a)) === z \t?\t", constrain_sum_bond);
-
+*/
 
 
 /*
@@ -216,3 +219,168 @@ console.log(verify_SquareProof(c2.env, c2.proof));
 let c3 = commit_squared(c2.out.secret, c2.out.t, g, h, p, q);
 console.log(verify_SquareProof(c3.env, c3.proof));
 */
+
+
+
+
+
+
+
+
+
+
+
+
+//#endregion
+
+//================================================================
+//#region Interpreter
+
+const Node = class {
+    constructor(name){
+        this.name = name;
+        this.secret = 0n;
+        this.t = 0n;
+    }
+};
+
+const LineSeparateObjects = text => {
+    let bracketsRound = 0;
+    let bracketsSquare = 0;
+    let bracketsCurly = 0;
+    let c = '';
+    let i = 0;
+    let f = 0;
+    let isSeparator = false;
+    let wasSpace = false;
+    const separators = ['=', '!', '+', '-', '*', '/', '&', '|', '^'];
+    const IsBracket = () => (bracketsRound != 0) || (bracketsSquare != 0) || (bracketsCurly != 0);
+    const AddElement = () => {
+        if(f >= i)
+            return;
+        arr.push(text.substring(f, i).trim());
+        f = i;
+    };
+    let arr = [];
+    for(i = 0; i < text.length; i++){
+        wasSpace = c == ' ';
+        c = text[i];
+        switch(c){
+            //space
+            case ' ':{
+                //stop separator
+                if(!IsBracket() && isSeparator){
+                    isSeparator = false;
+                    AddElement();
+                }
+                else if(!IsBracket()){
+                    if(!wasSpace){
+                        AddElement();
+                    }
+                    f = i + 1;
+                    wasSpace = false;
+                }
+            }break;
+            //brackets
+            case '(':{
+                //stop separator
+                if(!IsBracket() && isSeparator){
+                    isSeparator = false;
+                    AddElement();
+                }
+                bracketsRound++;
+            }break;
+            case '[':{
+                //stop separator
+                if(!IsBracket() && isSeparator){
+                    isSeparator = false;
+                    AddElement();
+                }
+                bracketsSquare++;
+            }break;
+            case '{':{
+                //stop separator
+                if(!IsBracket() && isSeparator){
+                    isSeparator = false;
+                    AddElement();
+                }
+                bracketsCurly++;
+            }break;
+            //+error checks!!!!
+            case ')':{bracketsRound--;}break;
+            case ']':{bracketsSquare--;}break;
+            case '}':{bracketsCurly--;}break;
+
+            //separators and breakers
+            default:{
+                //separators
+                if(!IsBracket() && (separators.indexOf(c) > -1)){
+                    if(!isSeparator){
+                        isSeparator = true;
+                        AddElement();
+                    }
+                }
+                else{
+                    //stop separator
+                    if(isSeparator){
+                        isSeparator = false;
+                        AddElement();
+                    }
+                }
+            }break;
+        }
+
+    }
+    //return elements
+    AddElement();
+    return arr;
+};
+
+const Interpreter = class {
+    constructor(){
+        this.nodes = [];
+    }
+
+    GetNode(name){
+        let i = this.nodes.length;
+        while(i--)
+            if(this.nodes[i].name == name)
+                return this.nodes[i];
+        return;
+    }
+
+    ParseLine(line, context){
+        line = line.trim();
+
+        let elements = LineSeparateObjects(line);
+        //"="
+        if(elements[1] == '='){
+            console.log("CREATE NODE");
+        }
+        //"+="
+        else if(elements[1] == '+='){
+            console.log("HOMOMORPHIC SUM");
+        }
+        //"==="
+        else if(elements[1] == '==='){
+            console.log("PROOF OF EQUAL SECRET");
+        }
+        //anything else
+        else{
+            console.log("CUSTOM PROOF");
+        }
+
+    }
+};
+
+
+//#endregion
+
+//================================================================
+
+const parser = new Interpreter();
+
+parser.ParseLine("a = 1");
+parser.ParseLine("square a_sq(a)");
+parser.ParseLine("a === a_sq");
+
