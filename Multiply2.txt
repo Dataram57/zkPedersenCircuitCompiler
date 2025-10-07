@@ -3,7 +3,7 @@
 
 template multiply(a, b){
     //provide 0
-    node zero = 0;
+    zero = 0;
     zero_sum += [
         [2, zero]
     ];
