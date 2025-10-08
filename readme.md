@@ -39,7 +39,7 @@ Makes usage of homomorphic properties.
 
 ### Native components
 
-- `square b(a)` - `b`'s value is and must be a square of `a`'s value. Based on [Proof of Squared Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-squared-commitments) and [Proof of Equal Commitments with Different Binding Generators](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-equal-commitments-with-different-binding-generators)
+- `square b(a)` - `b`'s value is and must be a square of `a`'s value. Based on [Proof of Squared Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-squared-commitments) and [Proof of Equal Commitments with Different Binding Generators](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-equal-commitments-with-different-binding-generators).
 
 ### Constrains
 
