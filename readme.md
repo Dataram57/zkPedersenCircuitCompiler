@@ -42,7 +42,8 @@ Makes usage of homomorphic properties.
 
 ### Constrains
 
-- `a === b` - `b`'s value must be equal `a`'s value. 
+- `a === b` - `a`'s value must be equal `b`'s value. 
+- `a === NUMBER` - `a`'s value must be equal `NUMBER`.
 <!--
 - `A @@@ b` - Secret of `b` must reveal A.
 -->

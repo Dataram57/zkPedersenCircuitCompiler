@@ -103,7 +103,7 @@ const verify_SquareProof = (env, proof) => {
     return check1 && check2;
 };
 
-const bond_equal_commits = (c1, t1, c2, t2, g, h, p, q) => {
+const bond_commit_equal_commit = (c1, t1, c2, t2, g, h, p, q) => {
     //calculate envs
     //const c1 = commit(secret, t1, g, h, p);
     //const c2 = commit(secret, t2, g, h, p);
@@ -126,7 +126,7 @@ const bond_equal_commits = (c1, t1, c2, t2, g, h, p, q) => {
     };
 };
 
-const verify_bond_equal_commits = (env, proof) => {
+const verify_bond_commit_equal_commit = (env, proof) => {
     //general
     const c1 = env.c1;
     const c2 = env.c2;
@@ -143,6 +143,66 @@ const verify_bond_equal_commits = (env, proof) => {
     return multi(c1, inv_c2, p) == powermod(h, r, p);
 };
 
+//verification
+// 1. get node's commit and remove g**s from it to get y=h**t
+// verify proof of knowing proper t
+
+const bond_commit_equal_secret = (ped_commit, ped_secret, ped_t, ped_g, ped_h, ped_p, ped_q) => {
+    //calculate envs
+    //https://www.zkdocs.com/docs/zkdocs/zero-knowledge-protocols/schnorr/
+
+    //get values
+    const x = ped_t;
+    //const h = powermod(ped_h, ped_t, ped_p);
+    const g = ped_h;
+    const p = ped_p;
+    //const q = ped_q;
+
+    //shnorr here
+    const r = 33n;  //in q
+    const u = powermod(g, r, p);
+    const c = 66n; //Fiat shamir //in q
+    const z = add(r, multi(x, c, p), p);
+
+    //result
+    return {
+        env: {
+            g: ped_g,
+            h: ped_h,
+            p: ped_p,
+            q: ped_q,
+            secret: ped_secret,
+            c: ped_commit
+        },
+        proof:{
+            u,
+            c,
+            z
+        }
+    };
+};
+
+const verify_bond_commit_equal_secret = (env, proof) => {
+    //h to check
+    const h = multi(env.c, powermod(powermod(env.g, env.secret, env.p), env.p - 2n, env.p), env.p);
+
+    //general
+    const g = env.h;
+    const p = env.p;
+
+    //get shnorr data
+    const u = proof.u;
+    const c = proof.c; //should be recomputed
+    const z = proof.z;
+
+    //checl
+    const check1 = z > 0n;
+    //check c (hash)...
+    const check2 = powermod(g, z, p) == multi(u, powermod(h, c, p), p);
+
+    //return
+    return check1 && check2;
+};
 
 let p = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 let g = 3n;
@@ -159,6 +219,16 @@ let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
 //================================================================
 //#region Examples
 
+/*
+let secret = 3n;
+console.log("secret is", secret);
+let t = 123n;
+const c = commit(secret, t, g, h, p);
+let secret_target = 3n;
+const c_bond = bond_commit_equal_secret(c, secret_target, t, g, h, p, q);
+console.log(verify_bond_commit_equal_secret(c_bond.env, c_bond.proof));
+*/
+
 //console.log(powermod(g, p, p));
 
 
@@ -173,9 +243,9 @@ console.log("secret is", secret);
 let t = 123n;
 let c = commit(secret, t, g, h, p);
 let c_squared = commit_squared(secret, t, g, h, p, q);
-let c_squared_bond = bond_equal_commits(c, t, c_squared.out.commit, c_squared.out.t, g, h, p, q);
+let c_squared_bond = bond_commit_equal_commit(c, t, c_squared.out.commit, c_squared.out.t, g, h, p, q);
 const constrain1 = verify_SquareProof(c_squared.env, c_squared.proof);
-const constrain2 = verify_bond_equal_commits(c_squared_bond.env, c_squared_bond.proof);
+const constrain2 = verify_bond_commit_equal_commit(c_squared_bond.env, c_squared_bond.proof);
 console.log("is secret a bit?", constrain1, "&&",constrain2, "=",constrain1 && constrain2);
 */
 
@@ -202,12 +272,12 @@ let c_zero = commit(secretZero, t_zero, g, h, p);
 const t_zero_sum = add(t_zero, t_zero, p);
 const c_zero_sum = multi(c_zero, c_zero, p);
 //constrain (z + z) === z
-let c_zero_sum_bond = bond_equal_commits(c_zero_sum, t_zero_sum, c_zero, t_zero, g, h, p, q);
-const constrain_zero_sum_bond = verify_bond_equal_commits(c_zero_sum_bond.env, c_zero_sum_bond.proof);
+let c_zero_sum_bond = bond_commit_equal_commit(c_zero_sum, t_zero_sum, c_zero, t_zero, g, h, p, q);
+const constrain_zero_sum_bond = verify_bond_commit_equal_commit(c_zero_sum_bond.env, c_zero_sum_bond.proof);
 console.log("(z + z) === z \t?\t", constrain_zero_sum_bond);
 //constrain (a + (-a)) === z
-let c_sum_bond = bond_equal_commits(c_sum, t_sum, c_zero, t_zero, g, h, p, q);
-const constrain_sum_bond = verify_bond_equal_commits(c_sum_bond.env, c_sum_bond.proof);
+let c_sum_bond = bond_commit_equal_commit(c_sum, t_sum, c_zero, t_zero, g, h, p, q);
+const constrain_sum_bond = verify_bond_commit_equal_commit(c_sum_bond.env, c_sum_bond.proof);
 console.log("(a + (-a)) === z \t?\t", constrain_sum_bond);
 */
 
@@ -417,3 +487,4 @@ console.log(parser.ParseLine("a = 1"));
 console.log(parser);
 parser.ParseLine("square a_sq(a)");
 parser.ParseLine("a === a_sq");
+
