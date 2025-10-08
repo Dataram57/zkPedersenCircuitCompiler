@@ -33,6 +33,7 @@ sum += [
     ,d
 ];
 ```
+Based on [The Additive Property](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#the-additive-property).
 
 Makes usage of homomorphic properties.
 
@@ -42,8 +43,5 @@ Makes usage of homomorphic properties.
 
 ### Constrains
 
-- `a === b` - `a`'s value must be equal `b`'s value. 
-- `a === NUMBER` - `a`'s value must be equal `NUMBER`.
-<!--
-- `A @@@ b` - Secret of `b` must reveal A.
--->
+- `a === b` - `a`'s value must be equal `b`'s value. Based on [An Easy Proof of Equal Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#an-easy-proof-of-equal-commitments).
+- `a === NUMBER` - `a`'s value must be equal `NUMBER`. Based on [Schnorr’s identification protocol - Non-interactive protocol](https://www.zkdocs.com/docs/zkdocs/zero-knowledge-protocols/schnorr/#non-interactive-protocol).
