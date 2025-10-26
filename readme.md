@@ -1,4 +1,17 @@
+# Goal
 
+This was my attempt of recreating ZK crypto system (like zkSNARK) that could serve a safe and verified runner of the app written in language described here.
+
+### Reality check:
+
+ZkSNARKs already give you a decent and much more efficient solution than this.
+
+### Comparison
+
+| Feature | This | zkSNARKs |
+| :--: | :--: | :--: |
+| Proof size | infinite | constant |
+| Circuit gate count | infinite  | <=Trusted Setup | 
 
 # Language
 
@@ -35,7 +48,7 @@ sum += [
 ```
 Based on [The Additive Property](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#the-additive-property).
 
-Makes usage of homomorphic properties.
+Make usage of homomorphic properties.
 
 ### Native components
 
