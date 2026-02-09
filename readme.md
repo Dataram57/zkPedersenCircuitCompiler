@@ -22,6 +22,7 @@ ZkSNARKs already give you a decent and much more efficient solution than this.
 
 ### Negation of Secrets:
 Constraints:
+
 $$a+\left(-a\right)=0$$
 
 Code:
@@ -35,6 +36,7 @@ equal, s1, 0;
 ### Secret is a bit:
 
 Constraints:
+
 $$a=a^{2}$$
 
 Code:
@@ -47,9 +49,11 @@ same, sq_x, x;
 ### Multiplication of Secrets :
 
 General way of computing the multiplication of secrets:
+
 $$a\cdot b=\frac{\left(a+b\right)^{2}-a^{2}-b^{2}}{2}$$
 
 Constraints:
+
 $$
 \left\{
 \begin{aligned}
