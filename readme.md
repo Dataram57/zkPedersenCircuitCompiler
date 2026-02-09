@@ -21,7 +21,8 @@ ZkSNARKs already give you a decent and much more efficient solution than this.
 # Examples
 
 ### Negation of Secrets:
-Constraints:
+
+Comparison constraints:
 
 $$a+\left(-a\right)=0$$
 
@@ -35,9 +36,11 @@ equal, s1, 0;
 
 ### Secret is a bit:
 
-Constraints:
+Comparison constraints:
 
 $$x=x^{2}$$
+
+This forces $x$ to be either $0$ or $1$.
 
 Code:
 ```
@@ -52,16 +55,26 @@ General way of computing the multiplication of secrets:
 
 $$a\cdot b=\frac{\left(a+b\right)^{2}-a^{2}-b^{2}}{2}$$
 
-Constraints:
+Comparison constraints:
 
 $$
-\left\{
-\begin{aligned}
-a^{2}+\left(-a^{2}\right) &= 0 \\
-b^{2}+\left(-b^{2}\right) &= 0
-\end{aligned}
-\right.
+\begin{cases}
+a^{2} + (-a^{2}) = 0 \\
+b^{2} + (-b^{2}) = 0
+\end{cases}
 $$
+
+Additions:
+
+$$
+\text{top} = 1\cdot\left(a+b\right)^{2}+1\cdot\left(-a^{2}\right)+1\cdot\left(-b^{2}\right)
+$$
+
+$$
+\text{out} = \frac{\text{top}}{2} \tag{2}
+$$
+
+
 
 Code:
 ```
