@@ -37,7 +37,7 @@ equal, s1, 0;
 
 Constraints:
 
-$$a=a^{2}$$
+$$x=x^{2}$$
 
 Code:
 ```
