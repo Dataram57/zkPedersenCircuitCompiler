@@ -57,8 +57,8 @@ Constraints:
 $$
 \left\{
 \begin{aligned}
-a^{2}+\left(-a^{2}\right)=0 \\
-b^{2}+\left(-b^{2}\right)=0
+a^{2}+\left(-a^{2}\right) &= 0 \\
+b^{2}+\left(-b^{2}\right) &= 0
 \end{aligned}
 \right.
 $$
