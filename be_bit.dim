@@ -1,3 +1,6 @@
 input, x;
 square,sq_x, x;
 same, sq_x, x;
+same, x, sq_x;
+same, x, x;
+same, sq_x, sq_x;

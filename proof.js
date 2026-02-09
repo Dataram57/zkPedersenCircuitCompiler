@@ -250,9 +250,9 @@ const inputs = {
     c: 5,
 
     //bits
-    x: 5
+    x: 1
 }
-const data = fs.readFileSync('./be_bit.dim', 'utf8');
+const data = fs.readFileSync('./pythagoras.dim', 'utf8');
 
 
 //Running
@@ -278,7 +278,6 @@ while(true){
     i = args.length;
     while(i--)
         args[i] = args[i].trim();
-    console.log(args);
     //interpret
     switch(args[0]){
         case "input":
@@ -287,7 +286,7 @@ while(true){
             memSecrets[args[1]] = secret;
             memRand[args[1]] = rand;
             await receipt.write(commit(secret, rand, g, h, p) + ";\n");
-            console.log(args[1], "<==", secret);
+            console.log("signal input", args[1], "<==", secret);
             break;
         case "commit":
             secret = BigIntMod(math.evaluate(args[2], memSecrets), q);
@@ -295,7 +294,7 @@ while(true){
             memSecrets[args[1]] = secret;
             memRand[args[1]] = rand;
             await receipt.write(commit(secret, rand, g, h, p) + ";\n");
-            console.log(args[1], "<--", args[2], "\t//", secret);
+            console.log("signal", args[1], "<--", args[2], "\t//", secret);
             break;
         case "sum":
             sumSecret = 0n;
@@ -318,7 +317,7 @@ while(true){
                 else
                     temp += args[i] + " + ";
             }
-            console.log(args[1], "=", temp + "0", "\t//", sumSecret);
+            console.log("signal", args[1], "<==", temp + "0", "\t//", sumSecret);
             break;
         case "equal":
             proof = bond_commit_equal_secret(
@@ -328,7 +327,7 @@ while(true){
                 g, h, p, q
             );
             await receipt.write(proof.proof.u + "," + proof.proof.c + "," + proof.proof.z + ";\n");
-            console.log(args[1], "===", args[2]);
+            console.log(args[1], "===", args[2], "\t//", (memSecrets[args[1]] == BigIntMod(args[2], p)) ? "✅" : "❌");
             break;
         case "square":
             secret = memSecrets[args[2]];
@@ -345,10 +344,18 @@ while(true){
                 proof.proof.z2 + "," +
                 proof.proof.z3 + ";\n"
             );
-            console.log(args[1], "<==", args[2], "*", args[2], "\t//", proof.out.secret);
+            console.log("signal", args[1], "<==", args[2], "*", args[2], "\t//", proof.out.secret);
             break;
         case "same":
-
+            proof = bond_commit_equal_commit(
+                commit(memSecrets[args[1]], memRand[args[1]], g, h, p),
+                memRand[args[1]],
+                commit(memSecrets[args[2]], memRand[args[2]], g, h, p),
+                memRand[args[2]],
+                g,h,p,q
+            );
+            await receipt.write(proof.proof.r + ";\n");
+            console.log(args[1], "===", args[2], "\t//", (memSecrets[args[1]] == memSecrets[args[2]]) ? "✅" : "❌");
             break;
     }
 

@@ -1,0 +1,8 @@
+input, a;
+input, b;
+input, c;
+square,sq_a, a;
+square,sq_b, b;
+square,sq_c, c;
+sum,s1, 1,sq_a, 1,sq_b;
+same, s1, sq_c;  

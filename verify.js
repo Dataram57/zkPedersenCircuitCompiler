@@ -242,7 +242,7 @@ let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
 
 
 //Running
-const dimpCode = new Dimperpreter(fs.readFileSync('./be_bit.dim', 'utf8'));
+const dimpCode = new Dimperpreter(fs.readFileSync('./pythagoras.dim', 'utf8'));
 const dimpReceipt = new Dimperpreter(fs.readFileSync('./receipt.dim', 'utf8'));
 const memCommits = {};
 let args = [];
@@ -254,6 +254,7 @@ let sumCommits = 0n;
 let proofEnv = null;
 let proofProof = null;
 let verification = false;
+let temp = "";
 while(true){
     //read next
     args = dimpCode.Next();
@@ -263,16 +264,17 @@ while(true){
     i = args.length;
     while(i--)
         args[i] = args[i].trim();
-    console.log(args);
     //interpret
     switch(args[0]){
         case "input":
             com = BigIntMod(dimpReceipt.Next()[0], p);
             memCommits[args[1]] = com;
+            console.log("signal input", args[1], "<== SECRET");
             break;
         case "commit":
             com = BigIntMod(dimpReceipt.Next()[0], p);
             memCommits[args[1]] = com;
+            console.log("signal", args[1], "<== SECRET_ADDITIONAL");
             break;
         case "sum":
             x = 0n;
@@ -284,6 +286,14 @@ while(true){
                     sumCommits = multi(sumCommits, powermod(memCommits[args[i]], x, p), p);
             }
             memCommits[args[1]] = sumCommits;
+            temp = "";
+            for(i = 2; i < args.length; i++){
+                if(i % 2 == 0)
+                    temp += args[i] + "*";
+                else
+                    temp += args[i] + " + ";
+            }
+            console.log("signal", args[1], "<==", temp + "0");
             break;
         case "equal":
             proof = dimpReceipt.Next();
@@ -298,7 +308,7 @@ while(true){
                 z: BigIntMod(proof[2], p)
             };
             verification = verify_bond_commit_equal_secret(proofEnv, proofProof);
-            console.log(verification ? "✅" : "❌", args[1], "===", args[2]);
+            console.log(args[1], "===", args[2], "//", verification ? "✅" : "❌");
             break;
         case "square":
             com = BigIntMod(dimpReceipt.Next()[0], p);
@@ -318,7 +328,20 @@ while(true){
                 z3: BigIntMod(proof[5], p),
             };
             verification = verify_SquareProof(proofEnv, proofProof);
-            console.log(verification ? "✅" : "❌", args[1], "<==", args[2], "*", args[2]);
+            console.log("signal", args[1], "<==", args[2], "*", args[2], "//", verification ? "✅" : "❌");
+            break;
+        case "same":
+            proof = dimpReceipt.Next();
+            proofEnv = {
+                c1: memCommits[args[1]],
+                c2: memCommits[args[2]],
+                g,h,p
+            };
+            proofProof = {
+                r: BigIntMod(proof[0], p)
+            };
+            verification = verify_bond_commit_equal_commit(proofEnv, proofProof);
+            console.log(args[1], "===", args[2], "//", verification ? "✅" : "❌");
             break;
     }
 }
