@@ -17,6 +17,7 @@ ZkSNARKs already give you a decent and much more efficient solution than this.
 | :--: | :--: | :--: |
 | Proof size | infinite | constant |
 | Circuit gate count | infinite  | <=Trusted Setup | 
+| Trusted Setup | Done via Fiat-Shamir | Ceremony required | 
 
 # Examples
 
