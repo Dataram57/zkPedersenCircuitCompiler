@@ -19,6 +19,7 @@ const powermod = (a, b, p) => {
     return r;
 };
 const multi = (a, b, p) => (a * b) % p;
+const divCeil = (a, b, p) => (a / b + 1n) % p;
 const add = (a, b, p) => (a + b) % p;
 const commit = (secret, rand, g, h, p) => multi(powermod(g, secret,p), powermod(h, rand, p), p);
 const BigIntMod = (v, p) => {
@@ -235,7 +236,7 @@ const verify_bond_commit_equal_secret = (env, proof) => {
 
 let p = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
 let g = 3n;
-let q = p - 1n;
+let q = 3301n;
 
 //check
 console.log(powermod(g, q, p)); //must
@@ -252,7 +253,7 @@ const inputs = {
     //bits
     x: 1
 }
-const data = fs.readFileSync('./pythagoras.dim', 'utf8');
+const data = fs.readFileSync('./multiply.dim', 'utf8');
 
 
 //Running
@@ -302,7 +303,19 @@ while(true){
             x = 0n;
             for(i = 2; i < args.length; i++){
                 if(i % 2 == 0)
-                    x = BigIntMod(args[i], p);
+                    switch(args[i][0]){
+                        case '.':
+                            x = BigIntMod(Math.ceil(Number(q) * parseFloat(args[i])), q);
+                            break;
+                        case '/':
+                            x = args[i].substring(1);
+                            console.log(x);
+                            x = divCeil(q, BigIntMod(x, q), q);
+                            break;
+                        default:
+                            x = BigIntMod(args[i], q);
+                            break;
+                    }
                 else{
                     sumSecret = add(sumSecret, multi(x, memSecrets[args[i]], q), q);
                     sumRand = add(sumRand, multi(x, memRand[args[i]], q), q);

@@ -1,0 +1,29 @@
+input, a;
+input, b;
+
+sum, sum_ab,
+    1, a,
+    1, b;
+square, squared_sum_ab, sum_ab;
+
+square, squared_a, a;
+commit, negated_squared_a, (-1) * squared_a;
+sum, sum_constraint_a,
+    1, squared_a,
+    1, negated_squared_a; 
+equal, sum_constraint_a, 0;
+
+square, squared_b, b;
+commit, negated_squared_b, (-1) * squared_b;
+sum, sum_constraint_b,
+    1, squared_b,
+    1, negated_squared_b;
+equal, sum_constraint_b, 0;
+
+sum, top,
+    1, squared_sum_ab,
+    1, negated_squared_a,
+    1, negated_squared_b;
+
+sum, out,
+    /2, top;
