@@ -6,7 +6,7 @@ const math = create(all);
 //================================================================
 //#region Modular Math
 
-//https://www.boxentriq.com/code-breaking/modular-exponentiation
+//https://www.boxentriq.com/code-breaking/modaular-exponentiation
 
 const powermod = (a, b, p) => {
     let r = 1n;
@@ -234,14 +234,14 @@ const verify_bond_commit_equal_secret = (env, proof) => {
 //================================================================
 //#region Main
 
-let p = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
-let g = 3n;
-let q = 3301n;
+//nahh use elliptic curves instead...
+const q = 2216573098084527375981661931035867941281101380875n; //should be prime
+const p = 1108286549042263687990830965517933970640550690437n; //must be prime
+const g = powermod(33n, (p - 1n) / q, p);
+const h = powermod(g, 33n, p);//Hash(g);   //trusted setup //no one should know x such that h=g**x
 
-//check
-console.log(powermod(g, q, p)); //must
-let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
-
+//checks
+console.log("Is G generator of q subgroup:", powermod(g, q, p));
 
 //setup
 const inputs = {
@@ -340,7 +340,7 @@ while(true){
                 g, h, p, q
             );
             await receipt.write(proof.proof.u + "," + proof.proof.c + "," + proof.proof.z + ";\n");
-            console.log(args[1], "===", args[2], "\t//", (memSecrets[args[1]] == BigIntMod(args[2], p)) ? "✅" : "❌");
+            console.log(args[1], "===", args[2], "\t//", (verify_bond_commit_equal_secret(proof.env, proof.proof)) ? "✅" : "❌");
             break;
         case "square":
             secret = memSecrets[args[2]];
@@ -368,7 +368,7 @@ while(true){
                 g,h,p,q
             );
             await receipt.write(proof.proof.r + ";\n");
-            console.log(args[1], "===", args[2], "\t//", (memSecrets[args[1]] == memSecrets[args[2]]) ? "✅" : "❌");
+            console.log(args[1], "===", args[2], "\t//", verify_bond_commit_equal_commit(proof.env, proof.proof) ? "✅" : "❌");
             break;
     }
 
