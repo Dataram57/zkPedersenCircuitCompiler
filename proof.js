@@ -244,9 +244,13 @@ let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
 
 //setup
 const inputs = {
+    //simple values
     a: 3,
     b: 4,
-    c: 5
+    c: 5,
+
+    //bits
+    x: 5
 }
 const data = fs.readFileSync('./be_bit.dim', 'utf8');
 
@@ -283,7 +287,7 @@ while(true){
             memSecrets[args[1]] = secret;
             memRand[args[1]] = rand;
             await receipt.write(commit(secret, rand, g, h, p) + ";\n");
-            console.log(args[1], "<==",secret);
+            console.log(args[1], "<==", secret);
             break;
         case "commit":
             secret = BigIntMod(math.evaluate(args[2], memSecrets), q);
@@ -291,7 +295,7 @@ while(true){
             memSecrets[args[1]] = secret;
             memRand[args[1]] = rand;
             await receipt.write(commit(secret, rand, g, h, p) + ";\n");
-            console.log(args[1], "<==", args[2], "<--", secret);
+            console.log(args[1], "<--", args[2], "\t//", secret);
             break;
         case "sum":
             sumSecret = 0n;
@@ -314,9 +318,9 @@ while(true){
                 else
                     temp += args[i] + " + ";
             }
-            console.log(args[1], "=", temp + "0", "=", sumSecret);
+            console.log(args[1], "=", temp + "0", "\t//", sumSecret);
             break;
-        case "equal_secret":
+        case "equal":
             proof = bond_commit_equal_secret(
                 commit(memSecrets[args[1]], memRand[args[1]], g, h, p),
                 BigIntMod(args[2], p),
@@ -325,6 +329,26 @@ while(true){
             );
             await receipt.write(proof.proof.u + "," + proof.proof.c + "," + proof.proof.z + ";\n");
             console.log(args[1], "===", args[2]);
+            break;
+        case "square":
+            secret = memSecrets[args[2]];
+            rand = memRand[args[2]];
+            proof = commit_squared(secret, rand, g, h, p, q)
+            memSecrets[args[1]] = proof.out.secret;
+            memRand[args[1]] = proof.out.t;
+            await receipt.write(proof.out.commit + ";\n");
+            await receipt.write(
+                proof.proof.c3 + "," +
+                proof.proof.c4 + "," +
+                proof.proof.k + "," +
+                proof.proof.z1 + "," +
+                proof.proof.z2 + "," +
+                proof.proof.z3 + ";\n"
+            );
+            console.log(args[1], "<==", args[2], "*", args[2], "\t//", proof.out.secret);
+            break;
+        case "same":
+
             break;
     }
 

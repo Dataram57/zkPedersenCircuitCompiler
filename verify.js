@@ -242,7 +242,7 @@ let h = powermod(g, 33n, p);//Hash(g);   //trusted setup
 
 
 //Running
-const dimpCode = new Dimperpreter(fs.readFileSync('./negate.dim', 'utf8'));
+const dimpCode = new Dimperpreter(fs.readFileSync('./be_bit.dim', 'utf8'));
 const dimpReceipt = new Dimperpreter(fs.readFileSync('./receipt.dim', 'utf8'));
 const memCommits = {};
 let args = [];
@@ -285,7 +285,7 @@ while(true){
             }
             memCommits[args[1]] = sumCommits;
             break;
-        case "equal_secret":
+        case "equal":
             proof = dimpReceipt.Next();
             proofEnv = {
                 c: memCommits[args[1]],
@@ -300,8 +300,27 @@ while(true){
             verification = verify_bond_commit_equal_secret(proofEnv, proofProof);
             console.log(verification ? "✅" : "❌", args[1], "===", args[2]);
             break;
+        case "square":
+            com = BigIntMod(dimpReceipt.Next()[0], p);
+            memCommits[args[1]] = com;
+            proof = dimpReceipt.Next();
+            proofEnv = {
+                c1: memCommits[args[2]],
+                c2: memCommits[args[1]],
+                g,h,p
+            };
+            proofProof = {
+                c3: BigIntMod(proof[0], p),
+                c4: BigIntMod(proof[1], p),
+                k: BigIntMod(proof[2], p),
+                z1: BigIntMod(proof[3], p),
+                z2: BigIntMod(proof[4], p),
+                z3: BigIntMod(proof[5], p),
+            };
+            verification = verify_SquareProof(proofEnv, proofProof);
+            console.log(verification ? "✅" : "❌", args[1], "<==", args[2], "*", args[2]);
+            break;
     }
-
 }
 
 //#endregion
