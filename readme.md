@@ -1,3 +1,8 @@
+# Running
+
+- `proof.js` - generates proof of the transaction (`receipt.dim`).
+- `verify.js`- verifies proof of the transaction (`receipt.dim`).
+
 # Goal
 
 This was my attempt of recreating ZK crypto system (like zkSNARK) that could serve a safe and verified runner of the app written in language described here.
@@ -13,48 +18,76 @@ ZkSNARKs already give you a decent and much more efficient solution than this.
 | Proof size | infinite | constant |
 | Circuit gate count | infinite  | <=Trusted Setup | 
 
-# Language
+# Examples
 
-### Templates
+### Negation of Secrets:
+Constraints:
+$$a+\left(-a\right)=0$$
 
-Defining:
+Code:
 ```
-template(args) MyCircuit(input_nodes){
-    //...code, constrains...
-};
-```
-
-Using:
-
-```
-MyCircuit(args) c(input_nodes);
-//c.something...
+input, a;
+commit,neg_a, -a;
+sum,s1, 1,a, 1,neg_a;
+equal, s1, 0;
 ```
 
-### Nodes
+### Secret is a bit:
 
-- `b = a` - `b`'s value is said to be `a`. ***No verification of putting different value.***
+Constraints:
+$$a=a^{2}$$
 
-### Automatic nodes
-
+Code:
 ```
-//sum = a + 14*b + (1/2)*c + d 
-sum += [
-    a
-    ,[14, b]
-    ,[1/2, c]
-    ,d
-];
+input, x;
+square,sq_x, x;
+same, sq_x, x;
 ```
-Based on [The Additive Property](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#the-additive-property).
 
-Make usage of homomorphic properties.
+### Multiplication of Secrets :
 
-### Native components
+General way of computing the multiplication of secrets:
+$$a\cdot b=\frac{\left(a+b\right)^{2}-a^{2}-b^{2}}{2}$$
 
-- `square b(a)` - `b`'s value is and must be a square of `a`'s value. Based on [Proof of Squared Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-squared-commitments) and [Proof of Equal Commitments with Different Binding Generators](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-equal-commitments-with-different-binding-generators).
+Constraints:
+$$
+\left\{
+\begin{aligned}
+a^{2}+\left(-a^{2}\right)=0 \\
+b^{2}+\left(-b^{2}\right)=0
+\end{aligned}
+\right.
+$$
 
-### Constrains
+Code:
+```
+input, a;
+input, b;
 
-- `a === b` - `a`'s value must be equal `b`'s value. Based on [An Easy Proof of Equal Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#an-easy-proof-of-equal-commitments).
-- `a === NUMBER` - `a`'s value must be equal `NUMBER`. Based on [Schnorr’s identification protocol - Non-interactive protocol](https://www.zkdocs.com/docs/zkdocs/zero-knowledge-protocols/schnorr/#non-interactive-protocol).
+sum, sum_ab,
+    1, a,
+    1, b;
+square, squared_sum_ab, sum_ab;
+
+square, squared_a, a;
+commit, negated_squared_a, (-1) * squared_a;
+sum, sum_constraint_a,
+    1, squared_a,
+    1, negated_squared_a; 
+equal, sum_constraint_a, 0;
+
+square, squared_b, b;
+commit, negated_squared_b, (-1) * squared_b;
+sum, sum_constraint_b,
+    1, squared_b,
+    1, negated_squared_b;
+equal, sum_constraint_b, 0;
+
+sum, top,
+    1, squared_sum_ab,
+    1, negated_squared_a,
+    1, negated_squared_b;
+
+sum, out,
+    /2, top;
+```
