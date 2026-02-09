@@ -1,0 +1,4 @@
+input, a;
+commit,neg_a, -a;
+sum,s1, 1,a, 1,neg_a;
+equal, s1, 0;
