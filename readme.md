@@ -3,6 +3,11 @@
 - `proof.js` - generates proof of the transaction (`receipt.dim`).
 - `verify.js`- verifies proof of the transaction (`receipt.dim`).
 
+### Conversion to ECC with AI
+
+- `ai_proof_ecc.js` - generates proof of the transaction (`receipt.dim`).
+- `ai_verify_ecc.js`- verifies proof of the transaction (`receipt.dim`).
+
 # Goal
 
 This was my attempt of recreating ZK crypto system (like zkSNARK) that could serve a safe and verified runner of the app written in language described here.
