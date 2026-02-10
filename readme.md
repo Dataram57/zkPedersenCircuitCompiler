@@ -7,7 +7,8 @@ Requirements: `npm install mathjs`
 
 ### Conversion to ECC with AI
 
-Be cautious and suspicious of AI solutions as I haven't and probably will not verify them.
+***Be cautious and suspicious of AI solutions as I haven't and probably will not verify them.***
+
 Requirements: `npm install elliptic`
 
 - `ai_proof_ecc.js` - generates proof of the transaction (`receipt.dim`).
