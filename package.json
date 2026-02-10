@@ -1,6 +1,7 @@
 {
-  "type":"module",
+  "type": "module",
   "dependencies": {
+    "elliptic": "^6.6.1",
     "mathjs": "^15.1.0"
   }
 }
