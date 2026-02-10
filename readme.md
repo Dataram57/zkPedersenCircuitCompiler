@@ -1,3 +1,23 @@
+# zkPedersenCircuitCompiler
+
+Write blind programs and make computation prove-able.
+
+### Goal
+
+This was my attempt of recreating ZK crypto system (like zkSNARK) that could serve a safe and verified runner of the app written in language described here.
+
+### Reality check:
+
+ZkSNARKs already give you a decent and much more efficient solution than this.
+
+### Comparison
+
+| Feature | This | zkSNARKs |
+| :--: | :--: | :--: |
+| Proof size | infinite | constant |
+| Circuit gate count | infinite  | <=Trusted Setup | 
+| Trusted Setup | Done via Fiat-Shamir | Ceremony required | 
+
 # Running
 
 Requirements: `npm install mathjs`
@@ -14,21 +34,21 @@ Requirements: `npm install elliptic`
 - `ai_proof_ecc.js` - generates proof of the transaction (`receipt.dim`).
 - `ai_verify_ecc.js`- verifies proof of the transaction (`receipt.dim`).
 
-# Goal
+# Language
 
-This was my attempt of recreating ZK crypto system (like zkSNARK) that could serve a safe and verified runner of the app written in language described here.
+All circuits are written in the pseudo assembly-like language called dim, and all of them have `.dim` extension.
 
-### Reality check:
+Commitments:
+- `input, NEW_COMMITMENT;` - Commits to a value from the input.
+- `commit, NEW_COMMITMENT, EXPRESSION;` - Commits to a given expression.
 
-ZkSNARKs already give you a decent and much more efficient solution than this.
+Operations:
+- `sum, NEW_COMMITMENT, SCALAR, COMMITMENT,...;` - Commits to the sum of all of the given secrets multiplied by the corresponding scalar from given commitments. (Based on [Pedersen: The Additive Property](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#the-additive-property))
+- `square, NEW_COMMITMENT, REFERENCE_COMMITMENT` - Commits to a secret that is a square of the secret from the reference commitment. (Based on [Pedersen: Proof of Squared Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-squared-commitments))
 
-### Comparison
-
-| Feature | This | zkSNARKs |
-| :--: | :--: | :--: |
-| Proof size | infinite | constant |
-| Circuit gate count | infinite  | <=Trusted Setup | 
-| Trusted Setup | Done via Fiat-Shamir | Ceremony required | 
+Constraints:
+- `same, COM_A, COM_B;` - Proofs that the commitments `A` and `B` commit to the same secret. (Based on [Pedersen: An Easy Proof of Equal Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#an-easy-proof-of-equal-commitments))
+- `equal, COM, VALUE;` - Proofs that the commitment commits to a specific secret. (Based on [Schnorr’s identification protocol](https://www.zkdocs.com/docs/zkdocs/zero-knowledge-protocols/schnorr/)) 
 
 # Examples
 
