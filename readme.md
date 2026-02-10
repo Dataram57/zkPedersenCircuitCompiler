@@ -43,12 +43,12 @@ Commitments:
 - `commit, NEW_COMMITMENT, EXPRESSION;` - Commits to a given expression.
 
 Operations:
-- `sum, NEW_COMMITMENT, SCALAR, COMMITMENT,...;` - Commits to the sum of all of the given secrets multiplied by the corresponding scalar from given commitments. (Based on [Pedersen: The Additive Property](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#the-additive-property))
-- `square, NEW_COMMITMENT, REFERENCE_COMMITMENT` - Commits to a secret that is a square of the secret from the reference commitment. (Based on [Pedersen: Proof of Squared Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-squared-commitments))
+- `sum, NEW_COMMITMENT, SCALAR, COMMITMENT,...;` - Commits to the sum of all of the given secrets multiplied by the corresponding scalar from given commitments. *(Based on [Pedersen: The Additive Property](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#the-additive-property))*
+- `square, NEW_COMMITMENT, REFERENCE_COMMITMENT` - Commits to a secret that is a square of the secret from the reference commitment. *(Based on [Pedersen: Proof of Squared Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#proof-of-squared-commitments))*
 
 Constraints:
-- `same, COM_A, COM_B;` - Proofs that the commitments `A` and `B` commit to the same secret. (Based on [Pedersen: An Easy Proof of Equal Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#an-easy-proof-of-equal-commitments))
-- `equal, COM, VALUE;` - Proofs that the commitment commits to a specific secret. (Based on [Schnorr’s identification protocol](https://www.zkdocs.com/docs/zkdocs/zero-knowledge-protocols/schnorr/)) 
+- `same, COM_A, COM_B;` - Proofs that the commitments `A` and `B` commit to the same secret. *(Based on [Pedersen: An Easy Proof of Equal Commitments](https://www.zkdocs.com/docs/zkdocs/commitments/pedersen/#an-easy-proof-of-equal-commitments))*
+- `equal, COM, VALUE;` - Proofs that the commitment commits to a specific secret. *(Based on [Schnorr’s identification protocol](https://www.zkdocs.com/docs/zkdocs/zero-knowledge-protocols/schnorr/))*
 
 # Examples
 
